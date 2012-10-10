@@ -38,7 +38,7 @@ Former::horizontal_open()
   Former::xlarge_text('name')
     ->class('myclass')
     ->value('Joseph')
-    ->require();
+    ->required();
 
   Former::textarea('comments')
     ->rows(10)->columns(20)
@@ -50,7 +50,7 @@ Former::close()
 While also being able to do – just like in the days of old :
 
 ```php
-Former::xlarge_text('name', null, 'Joseph', array('require' => true, 'class' => 'myclass'))
+Former::xlarge_text('name', null, 'Joseph', array('required' => true, 'class' => 'myclass'))
 
 Former::textarea('comments', null, null, array('rows' => 10, 'columns' => 20, 'autofocus' => true))
 ```
@@ -388,6 +388,11 @@ Former::radios('radio')
 Former::inline_checkboxes('foo')->checkboxes('foo', 'bar')
 Former::stacked_radios('foo')->radios('foo', 'bar')
 
+// Set which checkables are checked or not in one move
+Former::checkboxes('level')
+  ->checkboxes(0, 1, 2)
+  ->check(array('level_0' => true, 'level_1' => false, 'level_2' => true))
+
 // Fine tune checkable elements
 Former::radios('radio')
   ->radios(array(
@@ -395,6 +400,9 @@ Former::radios('radio')
     'label' => array('name' => 'foo', 'value' => 'bar', 'data-foo' => 'bar'),
   ))
 ```
+
+**Important point :** Former gives you an option to force the pushing of checkboxes. What is that you mean ? That's when your checkboxes still pop up in your POST data even when they're unchecked. That sounds pretty normal but is actually the opposite of the weird-ass default behavior of forms. "IT'S UNCHECKED ? I HAVE NO RECOLLECTION WHATSOEVER OF THAT FIELD HAVING EVER EXISTED".
+You can change what value an unchecked checkbox possesses in the POST array via the `unchecked_value` option.
 
 When creating checkables via the checkboxes/radios() method, by default for each checkable name attribute it will use the original name you specified and append it a number (here in our exemple it would be `<input type="checkbox" name="checkme_2">`).
 It also repopulates it, meaning a checked input will stay checked on submit.
@@ -406,12 +414,14 @@ For those of you that work on multilingual projects, Former is also here to help
 
 ```php
 // This
+Former::label(__('validation.attributes.name'))
 Former::text('name', __('validation.attributes.name'))
 Former::text('name')->inlineHelp(__('help.name'))
 Former::checkbox('rules')->text(__('my.translation'))
 <legend>{{ __('validation.attributes.mylegend') }}</legend>
 
 // Is the same as this
+Former::label('name')
 Former::text('name')
 Former::text('name')->inlineHelp('help.name')
 Former::checkbox('rules')->text('my.translation')

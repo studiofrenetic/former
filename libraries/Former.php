@@ -59,6 +59,11 @@ class Former
       return static::form()->open($method, $parameters);
     }
 
+    // Avoid conflict with chained label method
+    if($method == 'label') {
+      return call_user_func_array('static::_label', $parameters);
+    }
+
     // Checking for any supplementary classes
     $classes = explode('_', $method);
     $method  = array_pop($classes);
@@ -357,6 +362,21 @@ class Former
   public static function token()
   {
     return static::hidden(\Session::csrf_token, \Session::token())->__toString();
+  }
+
+  /**
+   * Creates a label tag
+   *
+   * @param  string $label      The label content
+   * @param  string $name       The field the label's for
+   * @param  array  $attributes The label's attributes
+   * @return string             A <label> tag
+   */
+  public static function _label($label, $name = null, $attributes = array())
+  {
+    $label = Helpers::translate($label);
+
+    return \Form::label($name, $label, $attributes);
   }
 
   /**
