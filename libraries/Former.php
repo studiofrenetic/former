@@ -218,7 +218,15 @@ class Former
       // Transform the name into an array
       $value = static::$values;
 
-      $name = str_contains($name, '.') ? explode('.', $name) : (array) $name;
+      $name = str_contains($name, '[') ? explode('[', $name) : (array) $name;
+
+      if (count($name) > 1)
+      {
+        foreach($name as $index => $v)
+        {
+          $name[$index] = str_replace(']','',$v);
+        }
+      }
 
       // Dive into the model
       foreach($name as $k => $r) {

@@ -52,6 +52,13 @@ abstract class Field
    */
   public function __construct($type, $name, $label, $value, $attributes)
   {
+    $name = str_contains($name, '.') ? explode('.', $name) : $name;
+    
+    if(is_array($name))
+    {
+      $name = array_shift($name).'['.implode('][', $name).']';
+    }
+
     // Set base parameters
     $this->attributes = (array) $attributes;
     $this->label      = $label;
