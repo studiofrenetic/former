@@ -59,11 +59,6 @@ class Former
       return static::form()->open($method, $parameters);
     }
 
-    // Avoid conflict with chained label method
-    if($method == 'label') {
-      return call_user_func_array('static::_label', $parameters);
-    }
-
     // Checking for any supplementary classes
     $classes = explode('_', $method);
     $method  = array_pop($classes);
@@ -222,16 +217,29 @@ class Former
 
       // Transform the name into an array
       $value = static::$values;
+
       $name = str_contains($name, '.') ? explode('.', $name) : (array) $name;
 
       // Dive into the model
       foreach($name as $k => $r) {
 
+        $indexable = false;
+
+        if (is_numeric($r))
+        {
+          $indexable = true;
+        }
+
         // Multiple results relation
-        if(is_array($value)) {
+        if(is_array($value) and !$indexable) {
           foreach($value as $subkey => $submodel) {
             $value[$subkey] = isset($submodel->$r) ? $submodel->$r : $fallback;
           }
+          continue;
+        }
+        else if ($indexable)
+        {
+          $value = isset($value[$r]) ? $value[$r] : $fallback;
           continue;
         }
 
@@ -362,21 +370,6 @@ class Former
   public static function token()
   {
     return static::hidden(\Session::csrf_token, \Session::token())->__toString();
-  }
-
-  /**
-   * Creates a label tag
-   *
-   * @param  string $label      The label content
-   * @param  string $name       The field the label's for
-   * @param  array  $attributes The label's attributes
-   * @return string             A <label> tag
-   */
-  public static function _label($label, $name = null, $attributes = array())
-  {
-    $label = Helpers::translate($label);
-
-    return \Form::label($name, $label, $attributes);
   }
 
   /**
