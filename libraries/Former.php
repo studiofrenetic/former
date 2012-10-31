@@ -252,7 +252,9 @@ class Former
         }
 
         // Single model relation
-        if(isset($value->$r)) $value = $value->$r;
+        if(isset($value->$r) || isset($value->{'get_'.$r})) {          
+          $value = $value->$r;
+        } 
         else {
           $value = $fallback;
           break;
