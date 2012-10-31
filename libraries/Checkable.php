@@ -167,7 +167,7 @@ abstract class Checkable extends Field
     $field = call_user_func('\Form::'.$this->checkable, $name, $value, $this->isChecked($name, $value), $attributes);
 
     // Add hidden checkbox if requested
-    if(Config::get('push_checkboxes')) {
+    if(Config::get('push_checkboxes') && $this->checkable == 'checkbox') {
       $field = \Form::hidden($name, Config::get('unchecked_value')) . $field;
     }
 
