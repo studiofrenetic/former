@@ -9,7 +9,7 @@ namespace Former;
 
 use \File;
 
-abstract class Field
+abstract class Field extends Traits\FormerObject
 {
   /**
    * The field type
@@ -28,12 +28,6 @@ abstract class Field
    * @var string
    */
   protected $label;
-
-  /**
-   * The field attributes
-   * @var array
-   */
-  protected $attributes = array();
 
   /**
    * The field's control group
@@ -77,36 +71,6 @@ abstract class Field
     }
   }
 
-  /**
-   * Dynamically set attributes
-   *
-   * @param  string $method     An attribute
-   * @param  array  $parameters Its value(s)
-   */
-  public function __call($method, $parameters)
-  {
-    // Replace underscores
-    $method = str_replace('_', '-', $method);
-
-    // Get value and set it
-    $value = array_get($parameters, 0, 'true');
-    $this->setAttribute($method, $value);
-
-    return $this;
-  }
-
-  /**
-   * Get a Field variable or an attribute
-   *
-   * @param  string $attribute The desired attribute
-   * @return string            Its value
-   */
-  public function __get($attribute)
-  {
-    if(isset($this->$attribute)) return $this->$attribute;
-    else return array_get($this->attributes, $attribute);
-  }
-
   ////////////////////////////////////////////////////////////////////
   /////////////////////////// FUNCTIONS //////////////////////////////
   ////////////////////////////////////////////////////////////////////
@@ -119,6 +83,16 @@ abstract class Field
   public function isRequired()
   {
     return isset($this->attributes['required']);
+  }
+
+  /**
+   * Check if a field is unwrappable (no label)
+   *
+   * @return boolean
+   */
+  public function isUnwrappable()
+  {
+    return in_array($this->type, array('hidden', 'submit', 'button', 'reset'));
   }
 
   ////////////////////////////////////////////////////////////////////
@@ -148,6 +122,7 @@ abstract class Field
     else $this->label = array(
       'label' => Helpers::translate($text),
       'attributes' => $attributes);
+
     return $this;
   }
 
@@ -187,42 +162,6 @@ abstract class Field
     Former::control()->setLabel($name);
   }
 
-  /**
-   * Set an attribute
-   *
-   * @param string $attribute An attribute
-   * @param string $value     Its value
-   */
-  public function setAttribute($attribute, $value = null)
-  {
-    $this->attributes[$attribute] = $value;
-  }
-
-  /**
-   * Set a bunch of parameters at once
-   *
-   * @param array   $attributes An associative array of attributes
-   * @param boolean $merge      Whether they should be merged to the old ones
-   */
-  public function setAttributes($attributes, $merge = true)
-  {
-    $attributes = (array) $attributes;
-
-    $this->attributes = $merge
-      ? array_merge($this->attributes, $attributes)
-      : $attributes;
-  }
-
-  /**
-   * Add a class to the current field
-   *
-   * @param string $class The class to add
-   */
-  public function addClass($class)
-  {
-    $this->attributes = Helpers::addClass($this->attributes, $class);
-  }
-
   ////////////////////////////////////////////////////////////////////
   //////////////////////////////// HELPERS ///////////////////////////
   ////////////////////////////////////////////////////////////////////
@@ -242,7 +181,6 @@ abstract class Field
     if(!is_null($post)) $value = $post;
     elseif(!is_null($populate)) $value = $populate;
     else $value = $fallback;
-
     return $value;
   }
 

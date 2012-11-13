@@ -34,6 +34,9 @@ Former aims to re-laravelize form creation by transforming each field into its o
 
 ```php
 Former::horizontal_open()
+  ->id('MyForm')
+  ->secure()
+  ->method('GET')
 
   Former::xlarge_text('name')
     ->class('myclass')
@@ -43,6 +46,11 @@ Former::horizontal_open()
   Former::textarea('comments')
     ->rows(10)->columns(20)
     ->autofocus();
+
+  Former::actions (
+    Former::large_primary_submit('Submit'),
+    Former::large_inverse_reset('Reset')
+  )
 
 Former::close()
 ```
@@ -219,18 +227,18 @@ class Client extends Eloquent
 Former::select('clients')->fromQuery(Client::all());
 ```
 
-Is the same as doing this but you know, in less painful and DRYer. This will use each Task's default key, and output the Task's name as the option's label.
+Is the same as doing this but you know, in less painful and DRYer. This will use each Client's default key, and output the Client's name as the option's label.
 
 ```html
 <div class="control-group">
   <label for="foo" class="control-label">Foo</label>
   <div class="controls">
     <select id="foo" name="foo">
-      @foreach(Client::all() as $task)
-        @if(Input::get('foo', Input::old('foo')) == $task->code)
-          <option selected="selected" value="{{ $task->code }}">{{ $task->name }}</option>
+      @foreach(Client::all() as $client)
+        @if(Input::get('foo', Input::old('foo')) == $client->code)
+          <option selected="selected" value="{{ $client->code }}">{{ $client->name }}</option>
         @else
-          <option value="{{ $task->code }}">{{ $task->name }}</option>
+          <option value="{{ $client->code }}">{{ $client->name }}</option>
         @endif
       @endforeach
     </select>
@@ -453,7 +461,7 @@ All form classes encounter a problem at one point : what kind of data takes prec
     <div class="input-prepend input-append">
       <span class="add-on">@</span>
       {{ Form::text('input01', 'myname', (Input::get('input01', Input::old('input01')), array('class' => 'input-xlarge')) }}
-      <span class="add-on">$</span>
+      <span class="add-on"><i class="icon-white icon-enveloppe"></i></span>
     </div>
     <p class="help-block">This is an help text</p>
   </div>
@@ -468,13 +476,13 @@ echo Form::prepend_append(
     $validation->errors->get('input01'),
     Form::block_help('This is an help text')
   ),
-  '@', '$'
+  '@', Icon::white_enveloppe()
 );
 
 // Former
 Former::xlarge_text('input01', 'Text input')
   ->blockHelp('This is an help text')
-  ->prepend('@')->append('$')
+  ->prepend('@')->appendIcon('white-enveloppe')
   ->value('myname')
 ```
 

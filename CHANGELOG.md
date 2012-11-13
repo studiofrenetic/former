@@ -1,8 +1,20 @@
 ## Changelog
 
-### 2.X.X
+### 2.5.0
 
+- **[add] ControlGroup->prependIcon and appendIcon methods**
+- **[add] Add basic button class that allow Bootstrappy submit/buttons**
+- [add] Ability to pass an array of classes to add to Field->addClass
+- [fix] Fix instantiated classes bug in PHP 5.3.2
+- [fix] Fix multiple buttons instances overwriting themselves
+
+### 2.4.0
+
+- **[add] Form openers are now objects too and accept chained methods**
 - [add] Add `unchecked_value` option to decide what value unchecked checkboxes have in the POST array
+- [add] Allow booleans to be passed to Checkable->check() on single items
+- [mod] Disable `push_checkbox` option by default
+- [fix] Automatically fetch Lang objects passed to `->options`
 
 ### 2.3.0
 

@@ -2,7 +2,7 @@
 use \Former\Former;
 
 // Stub class for Buttons
-class Buttons
+class Button
 {
   public static function normal($text)
   {
@@ -170,8 +170,8 @@ class ControlGroupTest extends FormerTests
   public function testPrependAppendMix()
   {
     $control = Former::text('foo')
-      ->prepend('@', Buttons::normal('foo'))
-      ->append('@', Buttons::normal('foo'))
+      ->prepend('@', Button::normal('foo'))
+      ->append('@', Button::normal('foo'))
       ->__toString();
     $matcher = $this->createPrependAppendMatcher(
       array('@', '<button type="button" class="btn">foo</button>'),
@@ -182,12 +182,36 @@ class ControlGroupTest extends FormerTests
 
   public function testPrependButton()
   {
-    $control1 = Former::text('foo')->prepend(Buttons::normal('Submit'))->__toString();
+    $control1 = Former::text('foo')->prepend(Button::normal('Submit'))->__toString();
     $control2 = Former::text('foo')->prepend('<button type="button" class="btn">Submit</button>')->__toString();
     $matcher = $this->createPrependAppendMatcher(array('<button type="button" class="btn">Submit</button>'));
 
     $this->assertEquals($matcher, $control1);
     $this->assertEquals($matcher, $control2);
+  }
+
+  public function testPrependRawIcon()
+  {
+    $control = Former::text('foo')->prepend('<i class="icon-enveloppe"></i>')->__toString();
+    $matcher = $this->createPrependAppendMatcher(array('<i class="icon-enveloppe"></i>'));
+
+    $this->assertEquals($matcher, $control);
+  }
+
+  public function testPrependIcon()
+  {
+    $control = Former::text('foo')->prependIcon('enveloppe')->__toString();
+    $matcher = $this->createPrependAppendMatcher(array('<i class="icon-enveloppe"></i>'));
+
+    $this->assertEquals($matcher, $control);
+  }
+
+  public function testAppendWhiteIcon()
+  {
+    $control = Former::text('foo')->appendIcon('white-something')->__toString();
+    $matcher = $this->createPrependAppendMatcher(array(), array('<i class="icon-white icon-something"></i>'));
+
+    $this->assertEquals($matcher, $control);
   }
 
   public function testAllTheThings()
@@ -196,8 +220,8 @@ class ControlGroupTest extends FormerTests
       ->state('error')
       ->inlineHelp('foo')
       ->blockHelp('bar')
-      ->prepend('@', '$', Buttons::normal('foo'))
-      ->append('@', '$', Buttons::normal('foo'))
+      ->prepend('@', '$', Button::normal('foo'))
+      ->append('@', '$', Button::normal('foo'))
       ->__toString();
     $matcher =
     '<div class="control-group error">'.

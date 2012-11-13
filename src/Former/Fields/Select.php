@@ -42,7 +42,7 @@ class Select extends \Former\Field
     parent::__construct($type, $name, $label, $selected, $attributes);
 
     // Multiple models population
-    if(is_array($this->value)) {
+    if (is_array($this->value)) {
       $this->fromQuery($this->value);
       $this->value = $selected ?: null;
     }
@@ -51,11 +51,23 @@ class Select extends \Former\Field
   /**
    * Set the select options
    *
-   * @param  array $options  The options as an array
-   * @param  mixed $selected Facultative selected entry
+   * @param  array   $options      The options as an array
+   * @param  mixed   $selected     Facultative selected entry
+   * @param  boolean $valuesAsKeys Whether the array's values should be used as
+   *                               the option's values instead of the array's keys
    */
-  public function options($options, $selected = null)
+  public function options($_options, $selected = null, $valuesAsKeys = false)
   {
+    // Automatically fetch Lang objects for people who store translated options lists
+    if ($_options instanceof \Laravel\Lang) {
+      $_options = $_options->get();
+    }
+
+    // If valuesAsKeys is true, use the values as keys
+    if ($valuesAsKeys) {
+      foreach($_options as $v) $options[$v] = $v;
+    } else $options = $_options;
+
     $this->options = $options;
 
     if($selected) $this->value = $selected;
@@ -92,7 +104,17 @@ class Select extends \Former\Field
    */
   public function placeholder($placeholder)
   {
-    $this->placeholder = $placeholder;
+    $this->placeholder = Helpers::translate($placeholder);
+  }
+
+  /**
+   * Returns the current options in memory for manipulations
+   *
+   * @return array The current options array
+   */
+  public function getOptions()
+  {
+    return $this->options;
   }
 
   /**
@@ -103,7 +125,7 @@ class Select extends \Former\Field
   public function __toString()
   {
     // Multiselects
-    if($this->type == 'multiselect') {
+    if ($this->type == 'multiselect') {
       $this->multiple();
     }
 
@@ -111,7 +133,7 @@ class Select extends \Former\Field
     $select = Form::select($this->name, $this->options, $this->value, $this->attributes);
 
     // Add placeholder text if any
-    if($this->placeholder) {
+    if ($this->placeholder) {
       $placeholder = array('value' => '', 'disabled' => '');
       if(!$this->value) $placeholder['selected'] = '';
       $placeholder = '<option'.HTML::attributes($placeholder).'>' .$this->placeholder. '</option>';
