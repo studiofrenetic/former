@@ -46,7 +46,7 @@ abstract class Field extends Traits\FormerObject
    */
   public function __construct($type, $name, $label, $value, $attributes)
   {
-    $name = str_contains($name, '.') ? explode('.', $name) : $name;
+    $name = (str_contains($name, '.') and ! str_contains($name, '@')) ? explode('.', $name) : $name;
     
     if(is_array($name))
     {
