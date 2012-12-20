@@ -1,5 +1,5 @@
 {
-    "name": "anahkiasen/former",
+    "name": "frenesie/bundles/former",
     "description": "A powerful form builder for the Laravel framework",
     "authors": [
         {
@@ -7,9 +7,8 @@
             "email": "ehtnam6@gmail.com"
         }
     ],
-    "autoload": {
-        "psr-0": {
-            "Former": "libraries/"
-        }
-    }
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "minimum-stability": "dev"
 }
